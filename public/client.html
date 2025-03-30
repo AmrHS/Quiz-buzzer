@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Client</title>
+</head>
+<body>
+  <h2>Choose Your Team</h2>
+  <select id="team">
+    <option value="TeamA">Team A</option>
+    <option value="TeamB">Team B</option>
+    <option value="TeamC">Team C</option>
+  </select>
+  <button id="buzzBtn">Buzz!</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const buzzBtn = document.getElementById("buzzBtn");
+    const teamSelect = document.getElementById("team");
+
+    buzzBtn.onclick = () => {
+      const team = teamSelect.value;
+      socket.emit("buzz", team);
+    };
+  </script>
+</body>
+</html>

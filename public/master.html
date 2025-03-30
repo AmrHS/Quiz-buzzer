@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Master</title>
+</head>
+<body>
+  <h2>Buzz Order</h2>
+  <ul id="buzzList"></ul>
+
+  <h2>Scores</h2>
+  <ul id="scores">
+    <li>Team A: <span id="scoreA">0</span></li>
+    <li>Team B: <span id="scoreB">0</span></li>
+    <li>Team C: <span id="scoreC">0</span></li>
+  </ul>
+
+  <div>
+    <button onclick="mark(true)">Correct</button>
+    <button onclick="mark(false)">Wrong</button>
+    <button onclick="resetBuzz()">Reset</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const buzzList = document.getElementById("buzzList");
+
+    socket.on("buzzQueue", (queue) => {
+      buzzList.innerHTML = '';
+      queue.forEach(team => {
+        const li = document.createElement("li");
+        li.innerText = team;
+        buzzList.appendChild(li);
+      });
+    });
+
+    socket.on("scores", (scores) => {
+      document.getElementById("scoreA").innerText = scores.TeamA;
+      document.getElementById("scoreB").innerText = scores.TeamB;
+      document.getElementById("scoreC").innerText = scores.TeamC;
+    });
+
+    function mark(correct) {
+      const first = buzzList.children[0];
+      if (!first) return;
+      socket.emit("markAnswer", { team: first.innerText, correct });
+    }
+
+    function resetBuzz() {
+      socket.emit("reset");
+    }
+  </script>
+</body>
+</html>
